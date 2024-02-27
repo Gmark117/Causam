@@ -1,2 +1,2 @@
 # Causam
- Digital version of the game of same name I invented
+ Digital version of the game with the same name I invented
