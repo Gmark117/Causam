@@ -103,7 +103,7 @@ class MainMenu(Menu):
                            self.cursor_pos[0],
                            self.cursor_pos[1],
                            Assets.Fonts['SMALL'].value,
-                           Assets.Colors['RED'].value,
+                           Assets.Colors['GREEN'].value,
                            Assets.RectHandle['CENTER'].value)
 
             self.game.blit_screen()
@@ -118,7 +118,7 @@ class MainMenu(Menu):
         if self.game.START_KEY:
             match self.state:
                 case 'Start':
-                    self.game.curr_menu = self.game.simulation
+                    self.game.curr_menu = self.game.match_settings
                     self.play_button(self.options.button_sound)
                 case 'Options':
                     self.game.curr_menu = self.game.options

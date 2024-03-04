@@ -2,6 +2,10 @@ import os
 import pygame
 import Assets
 from MainMenu import MainMenu
+from OptionsMenu import OptionsMenu
+from MatchMenu import MatchMenu
+from CreditsMenu import CreditsMenu
+from Match import Match
 
 class Causam:
     def __init__(self):
@@ -24,7 +28,7 @@ class Causam:
         self.options         = OptionsMenu(self)
         self.main_menu       = MainMenu(self)
         self.credits         = CreditsMenu(self)
-        self.simulation      = SimulationMenu(self)
+        self.match_settings  = MatchMenu(self)
         self.curr_menu       = self.main_menu
 
 
@@ -37,7 +41,7 @@ class Causam:
     # Run the simulation
     def game_loop(self):
         if self.playing:
-            pass
+            self.match = Match(self)
 
 
     #  __  __     _     _   _     _      ____  _____      ___  _   _  ____   _   _  _____  ____  
@@ -48,7 +52,31 @@ class Causam:
 
     # Check player inputs
     def check_events(self):
-        pass
+        # Get the input
+        for event in pygame.event.get():
+            match event.type:
+                # If the player clicks the x on top of the window exit the game
+                case pygame.QUIT:
+                    self.running, self.playing, self.map_ready = False, False, False
+                    self.curr_menu.run_display = False
+                
+                # If the player clicks something on the keyboard
+                # they can go up or down with the arrows or
+                # they can select with ENTER and go back with BACKSPACE
+                case pygame.KEYDOWN:
+                    match event.key:
+                        case pygame.K_RETURN:
+                            self.START_KEY = True
+                        case pygame.K_BACKSPACE:
+                            self.BACK_KEY  = True
+                        case pygame.K_DOWN:
+                            self.DOWN_KEY  = True
+                        case pygame.K_UP:
+                            self.UP_KEY    = True
+                        case pygame.K_LEFT:
+                            self.LEFT_KEY  = True
+                        case pygame.K_RIGHT:
+                            self.RIGHT_KEY = True
 
     # Reset pushed key flags
     def reset_keys(self):
@@ -79,7 +107,7 @@ class Causam:
         self.window = pygame.display.set_mode((self.width,self.height), pygame.SCALED)
         
         # Set window title
-        pygame.display.set_caption('Cave Game')
+        pygame.display.set_caption('Causam')
 
         # Set game icon
         pygame.display.set_icon(pygame.image.load(Assets.Images['GAME_ICON'].value))
@@ -98,7 +126,7 @@ class Causam:
         self.window  = pygame.display.set_mode((self.width,self.height), pygame.SCALED)
 
         # Set window title
-        pygame.display.set_caption('Cave Game')
+        pygame.display.set_caption('Causam')
 
         # Set game icon
         pygame.display.set_icon(pygame.image.load(Assets.Images['GAME_ICON'].value))

@@ -1,0 +1,3 @@
+# Pieces initial positions: White (Line 2), Black (Line 3)
+A01 B02 B03 B04 B05 C01 C03 C05 C07 C09 C11
+G03 G04 G05 H03 H04 H05 H06 I03 I04 I05 I06 I07#
