@@ -1,7 +1,7 @@
 import pygame
 import Assets
 
-class SelRing(pygame.sprite.Sprite):
+class Node(pygame.sprite.Sprite):
     def __init__(self, game, x, y, img, id):
         super().__init__()
         self.image  = img
@@ -13,12 +13,13 @@ class SelRing(pygame.sprite.Sprite):
         self.game  = game
         self.id    = id
 
-        self.visible = False
+        self.visible  = False
+        self.occupied = False
 
     def update(self, events, id):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.visible = False
             if event.type == pygame.MOUSEBUTTONUP:
-                if self.rect.collidepoint(event.pos):
+                if self.rect.collidepoint(event.pos) and not self.occupied:
                     self.visible = False if self.visible else True

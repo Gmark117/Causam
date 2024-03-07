@@ -20,6 +20,8 @@ DISPLAY_H    = 750
 FULLSCREEN_W = 1694
 FULLSCREEN_H = 856
 
+IMAGE_DIM = 70
+
 # Lists for menu voices and settings
 main_menu_states     = ['Start', 'Options', 'Credits', 'Exit']
 options_menu_states  = ['Game Volume', 'Music Volume', 'Button Sound', 'Back']
@@ -100,6 +102,7 @@ class Images(Enum):
         BLUE_STONE   = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_B_Stone.png')
         H_BLUE_STONE = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_HB_Stone.png')
         SELECT_RING  = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Selection_Ring.png')
+        NEXT_NODE    = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Next_Node.png')
         GAME_ICON    = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Board.png')
 
 class RectHandle(Enum):
@@ -118,3 +121,23 @@ class RectHandle(Enum):
 # Calculate the square of the passed argument
 def sqr(x):
         return x**2
+
+def node_label(level, node_num):
+        letter = ''
+        
+        match level:
+                case 0: letter = 'A'
+                case 1: letter = 'B'
+                case 2: letter = 'C'
+                case 3: letter = 'D'
+                case 4: letter = 'E'
+                case 5: letter = 'F'
+                case 6: letter = 'G'
+                case 7: letter = 'H'
+                case 8: letter = 'I'
+                case 9: letter = 'J'
+                case 10: letter = 'K'
+        
+        label = letter + str(node_num+1)
+
+        return label
