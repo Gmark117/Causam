@@ -21,6 +21,8 @@ class Causam:
         # Initialise key flags to navigate in the menu
         self.UP_KEY,   self.DOWN_KEY, self.START_KEY = False, False, False
         self.BACK_KEY, self.LEFT_KEY, self.RIGHT_KEY = False, False, False
+        # Initialise mouse click flag
+        self.click, self.click_pos = False, None
         
         self.to_windowed()
 
@@ -77,11 +79,18 @@ class Causam:
                             self.LEFT_KEY  = True
                         case pygame.K_RIGHT:
                             self.RIGHT_KEY = True
+                
+                case pygame.MOUSEBUTTONDOWN:
+                    if event.button==1:
+                        self.click = True
+                        self.click_pos = event.pos
+                        print(self.click_pos)
 
     # Reset pushed key flags
     def reset_keys(self):
         self.UP_KEY,   self.DOWN_KEY, self.START_KEY = False, False, False
         self.BACK_KEY, self.LEFT_KEY, self.RIGHT_KEY = False, False, False
+        self.click, self.click_pos = False, None
 
 
     #  __  __     _     _   _     _      ____  _____      ____   ___  ____   ____   _         _    __   __

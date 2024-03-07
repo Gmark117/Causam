@@ -99,7 +99,8 @@ class Images(Enum):
         GREEN_STONE  = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_G_Stone.png')
         BLUE_STONE   = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_B_Stone.png')
         H_BLUE_STONE = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_HB_Stone.png')
-        GAME_ICON    = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_HB_Stone.png')
+        SELECT_RING  = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Selection_Ring.png')
+        GAME_ICON    = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Board.png')
 
 class RectHandle(Enum):
         CENTER       = 'Center'
