@@ -21,29 +21,30 @@ FULLSCREEN_W = 1694
 FULLSCREEN_H = 856
 
 IMAGE_DIM = 70
+IMG_OFFSET = - int(IMAGE_DIM/2) + 2
 
 # Lists for menu voices and settings
 main_menu_states     = ['Start', 'Options', 'Credits', 'Exit']
 options_menu_states  = ['Game Volume', 'Music Volume', 'Button Sound', 'Back']
 sim_menu_states      = ['Mode', 'AI Strength', 'Side', 'Back', 'Start Simulation']
 mode_options         = ["Player vs Player", "Player vs AI"]
-side_options         = ["Green", "Blue", "Random"]
+side_options         = ["White", "Black", "Random"]
 
 # Nodes positions
               # A,   B,   C,   D,   E,   F,   G,    H,    I,    J,    K
 nodes_pos_x = [85, 235, 385, 535, 685, 835, 985, 1135, 1285, 1435, 1585]
 nodes_pos_y = [
-        [428],                                          # A
-        [245,315,392,468,543,613],                      # B
-        [54,129,204,279,354,429,504,579,654,729,804],   # C
-        [90,165,240,315,390,465,540,615,690,765],       # D
-        [129,204,279,354,429,504,579,654,729],          # E
-        [165,240,315,390,465,540,615,690],              # F
-        [204,279,354,429,504,579,654],                  # G
-        [165,240,315,390,465,540,615,690],              # H
-        [129,204,279,354,429,504,579,654,729],          # I
-        [90,165,240,315,390,465,540,615,690,765],       # J
-        [54,129,204,279,354,429,504,579,654,729,804]    # K
+                                 [428],                            # A
+                    [245, 315, 392, 468, 543, 613],                # B
+        [ 54, 129, 204, 279, 354, 429, 504, 579, 654, 729, 804],   # C
+           [ 90, 165, 240, 315, 390, 465, 540, 615, 690, 765],     # D
+              [129, 204, 279, 354, 429, 504, 579, 654, 729],       # E
+                 [165, 240, 315, 390, 465, 540, 615, 690],         # F
+                    [204, 279, 354, 429, 504, 579, 654],           # G
+                 [165, 240, 315, 390, 465, 540, 615, 690],         # H
+              [129, 204, 279, 354, 429, 504, 579, 654, 729],       # I
+           [ 90, 165, 240, 315, 390, 465, 540, 615, 690, 765],     # J
+        [ 54, 129, 204, 279, 354, 429, 504, 579, 654, 729, 804]    # K
 ]
 
 # Pieces positions
@@ -121,6 +122,12 @@ class RectHandle(Enum):
 # Calculate the square of the passed argument
 def sqr(x):
         return x**2
+
+def update_selection(group, sprite):
+        if sprite.selected:
+            group.add(sprite)
+        elif group.sprite.id == sprite.id:
+            group.remove(sprite)
 
 def node_label(level, node_num):
         letter = ''

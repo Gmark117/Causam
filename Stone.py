@@ -6,11 +6,10 @@ class Stone(pygame.sprite.Sprite):
         super().__init__()
         self.image  = img
         self.rect   = self.image.get_rect()
-        self.img_offset = - int(Assets.IMAGE_DIM/2) + 2
         self.true_x = x
         self.true_y = y
-        self.rect.x = self.true_x + self.img_offset
-        self.rect.y = self.true_y + self.img_offset
+        self.rect.x = x + Assets.IMG_OFFSET
+        self.rect.y = y + Assets.IMG_OFFSET
 
         self.game = game
         self.id   = id
@@ -22,24 +21,23 @@ class Stone(pygame.sprite.Sprite):
         self.hist_x = []
         self.hist_y = []
     
-    def update(self, events, rings, nodes):
+    def update(self, events, selection):
         for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if not self.rect.collidepoint(event.pos):
-                    self.selected = False
-                    rings.update(events, self.id)
-                    nodes.update(events, self.id)
-            if event.type == pygame.MOUSEBUTTONUP:
-                if self.rect.collidepoint(event.pos):
-                    self.selected = False if self.selected else True
-                    rings.update(events, self.id)
-                    nodes.update(events, self.id)
+            if event.type == pygame.MOUSEBUTTONDOWN and not self.rect.collidepoint(event.pos):
+                self.selected = False
+            if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
+                self.selected = False if self.selected else True
+        
+        if self.selected:
+            Assets.update_selection(selection, self)
 
     def update_pos(self, x_new, y_new):
         self.true_x = x_new
         self.true_y = y_new
-        self.rect.x = x_new + self.img_offset
-        self.rect.y = y_new + self.img_offset
+        self.rect.x = x_new + Assets.IMG_OFFSET
+        self.rect.y = y_new + Assets.IMG_OFFSET
+
+        self.curr_node = Assets.node_label(self.true_x, self.true_y)
 
     def move(self, dest_x, dest_y):
         self.hist_x.append(self.true_x)
@@ -55,9 +53,9 @@ class Stone(pygame.sprite.Sprite):
         delta_x = self.hist_x[-1] - self.true_x
         delta_y = self.hist_y[-1] - self.true_y
         
-        for t in range(0,101):
-            self.game.display.blit(self.image, (int(self.rect.x + delta_x*t/100 + self.img_offset),
-                                                int(self.rect.y + delta_y*t/100 + self.img_offset)))
+        for t in range(1,101):
+            self.game.display.blit(self.image, (int(self.rect.x + delta_x*t/100),
+                                                int(self.rect.y + delta_y*t/100)))
             self.game.blit_screen()
 
         

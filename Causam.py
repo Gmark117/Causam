@@ -44,6 +44,7 @@ class Causam:
     def game_loop(self):
         if self.playing:
             self.match = Match(self)
+            self.playing, self.running = False, False
 
 
     #  __  __     _     _   _     _      ____  _____      ___  _   _  ____   _   _  _____  ____  

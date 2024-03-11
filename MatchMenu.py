@@ -18,7 +18,7 @@ class MatchMenu(Menu):
 
         self.mode     = 0   # ["Player vs Player", "Player vs AI"]
         self.ai_stren = 3   # 1 through 10
-        self.side     = 0   # ["Green", "Blue", "Random"]
+        self.side     = 0   # ["White", "Black", "Random"]
        
         # Define positions for menu text
         self.align_left      = self.mid_w - 50
