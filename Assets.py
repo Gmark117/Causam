@@ -30,7 +30,27 @@ sim_menu_states      = ['Mode', 'AI Strength', 'Side', 'Back', 'Start Simulation
 mode_options         = ["Player vs Player", "Player vs AI"]
 side_options         = ["White", "Black", "Random"]
 
-# Nodes positions
+# Nodes
+def node_label(level, node_num):
+        letter = ''
+        
+        match level:
+                case   85: letter = 'A'
+                case  235: letter = 'B'
+                case  385: letter = 'C'
+                case  535: letter = 'D'
+                case  685: letter = 'E'
+                case  835: letter = 'F'
+                case  985: letter = 'G'
+                case 1135: letter = 'H'
+                case 1285: letter = 'I'
+                case 1435: letter = 'J'
+                case 1585: letter = 'K'
+        
+        label = letter + str(node_num+1)
+
+        return label
+
               # A,   B,   C,   D,   E,   F,   G,    H,    I,    J,    K
 nodes_pos_x = [85, 235, 385, 535, 685, 835, 985, 1135, 1285, 1435, 1585]
 nodes_pos_y = [
@@ -47,18 +67,33 @@ nodes_pos_y = [
         [ 54, 129, 204, 279, 354, 429, 504, 579, 654, 729, 804]    # K
 ]
 
+nodes_up_border   = [ 'D1', 'E1', 'F1', 'G1', 'H1', 'I1',  'J1']
+nodes_down_border = ['D10', 'E9', 'F8', 'G7', 'H8', 'I9', 'J10']
+nodes_lvl_A  = ['A1']
+nodes_lvl_B  = ['B1', 'B2', 'B3', 'B4', 'B5', 'B6']
+nodes_lvl_C  = ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11']
+nodes_lvl_K = ['K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', 'K8', 'K9', 'K10', 'K11']
+nodes_internal = []
+for x in range(3,10):
+       for y in range(1, len(nodes_pos_y[x])-1):
+              nodes_internal.append(node_label(x,y))
+all_nodes = []
+for x in range(len(nodes_pos_x)):
+       for y in range(len(nodes_pos_y[x])):
+              all_nodes.append(node_label(nodes_pos_x[x],y))
+
 # Pieces positions
-           # [A01, B02, B03, B04, B05, C01, C03, C05, C07, C09, C11]
-greens_x = [ 85, 235, 235, 235, 235, 385, 385, 385, 385, 385, 385]
-greens_y = [428, 315, 392, 468, 543,  54, 204, 354, 504, 654, 804]
+w_nodes  = ['A1','B2','B3','B4','B5','C1','C3','C5','C7','C9','C11']
+greens_x = [  85, 235, 235, 235, 235, 385, 385, 385, 385, 385,  385]
+greens_y = [ 428, 315, 392, 468, 543,  54, 204, 354, 504, 654,  804]
 
-          # [G03, G05,  H03,  H04,  H05,  H06,  I03,  I04,  I05,  I06,  I07]
-blues_x = [985, 985, 1135, 1135, 1135, 1135, 1285, 1285, 1285, 1285, 1285]
-blues_y = [354, 504,  315,  390,  465,  540,  279,  354,  429,  504,  579]
+b_nodes  = ['G3', 'G5', 'H3', 'H4', 'H5', 'H6', 'I3', 'I4', 'I5', 'I6', 'I7']
+blues_x  = [ 985,  985, 1135, 1135, 1135, 1135, 1285, 1285, 1285, 1285, 1285]
+blues_y  = [ 354,  504,  315,  390,  465,  540,  279,  354,  429,  504,  579]
 
-           # G04
-h_blue_x = [985]
-h_blue_y = [429]
+h_b_node = ['G4']
+h_blue_x = [ 985]
+h_blue_y = [ 429]
 
 
 #   ____  _         _     ____   ____   _____  ____  
@@ -123,28 +158,74 @@ class RectHandle(Enum):
 def sqr(x):
         return x**2
 
-def update_selection(group, sprite):
+def is_occupied(x, y):
+        for i in range(len(nodes_pos_x)):
+                for j in range(len(nodes_pos_y)):
+                        return True if (x==nodes_pos_x[i] and y==nodes_pos_y[j]) else False
+
+def update_selection(nodes, next_nodes, selection, sprite):
         if sprite.selected:
-            group.add(sprite)
-        elif group.sprite.id == sprite.id:
-            group.remove(sprite)
-
-def node_label(level, node_num):
-        letter = ''
+                selection.add(sprite)
+        elif selection.sprite.id == sprite.id:
+                selection.remove(sprite)
         
-        match level:
-                case 0: letter = 'A'
-                case 1: letter = 'B'
-                case 2: letter = 'C'
-                case 3: letter = 'D'
-                case 4: letter = 'E'
-                case 5: letter = 'F'
-                case 6: letter = 'G'
-                case 7: letter = 'H'
-                case 8: letter = 'I'
-                case 9: letter = 'J'
-                case 10: letter = 'K'
-        
-        label = letter + str(node_num+1)
+        get_next_nodes(selection, nodes, next_nodes)
 
-        return label
+def get_next_nodes(selection, nodes, next_nodes):
+        # Return next viable nodes
+        for i in range(len(all_nodes)):
+                if selection.sprite.curr_node == all_nodes[i]:
+                        match all_nodes[i][0]:
+                                case 'A': next_from_first(nodes, next_nodes)
+                                case 'B': next_from_second(selection, nodes, next_nodes)
+                                #case 'C': next_from_third(selection, nodes, next_nodes)
+                                #case 'K': next_from_last(selection, nodes, next_nodes)
+                                #case   _: next_from_inside(selection, nodes, next_nodes)
+
+def turn_on(node, next_nodes):
+        node.visible = True
+        next_nodes.add(node)
+        
+def turn_off(node, next_nodes):
+        node.visible = False
+        next_nodes.remove(node)
+
+def next_from_first(nodes, next_nodes):
+        for node in nodes:
+                if node.id[0] == 'B':
+                        turn_off(node, next_nodes) if node.visible else turn_on(node, next_nodes)
+
+def next_from_second(selection, nodes, next_nodes):
+        curr_id = selection.sprite.curr_node
+        for node in nodes:
+                if (node.id[0] == 'A'
+                    or (node.id[0] == 'B' and (int(node.id[1:])==int(curr_id[1:])-1 or int(node.id[1:])==int(curr_id[1:])+1))
+                    or (node.id[0] == 'C' and int(node.id[1:])==(2 * int(curr_id[1:]) - 1))
+                    ):
+                        turn_off(node, next_nodes) if node.visible else turn_on(node, next_nodes)
+
+#def next_from_third(selection, nodes, next_nodes):
+#def next_from_last(selection, nodes, next_nodes):
+#def next_from_inside(selection, nodes, next_nodes):
+
+#  ____   _   _  _      _____  ____  
+# |  _ \ | | | || |    | ____|/ ___| 
+# | |_) || | | || |    |  _|  \___ \ 
+# |  _ < | |_| || |___ | |___  ___) |
+# |_| \_\ \___/ |_____||_____||____/ 
+
+'''
+Movements:
+- Pieces move between points along the lines
+- White pieces causes one piece adjacent to their new position to move one step to the left (One level lower)
+- Black pieces causes one piece adjacent to their new position to move one step to the right (One level higher)
+- The Black high piece causes one piece adjacent to their new position to move one step to the right OR to the left (Player Choice)
+
+Rules:
+- All semi-circles at the end are filled by White pieces     --> WHITE WINS
+- All non semi-circles at the end are filled by White pieces --> BLACK WINS
+- Pieces cannot move from the last level
+- Black pieces cannot occupy the last level
+- Multiple pieces cannot occupy the same node
+- You cannot displace a piece as an effect of your move if the destination node is occupied
+'''

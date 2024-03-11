@@ -42,16 +42,16 @@ class Match():
         self.nodes = pygame.sprite.RenderUpdates()
 
         for i in range(self.n_stones):
-            self.g_stones.add(Stone(self.game, Assets.greens_x[i], Assets.greens_y[i], i, self.green_img))
-            self.b_stones.add(Stone(self.game, Assets.blues_x[i], Assets.blues_y[i], i, self.blue_img))
+            self.g_stones.add(Stone(self.game, Assets.greens_x[i], Assets.greens_y[i], i, Assets.w_nodes[i], self.green_img))
+            self.b_stones.add(Stone(self.game, Assets.blues_x[i], Assets.blues_y[i], i, Assets.b_nodes[i], self.blue_img))
 
             for j in range(len(Assets.nodes_pos_y[i])):
                 self.rings.add(SelRing(self.game, Assets.nodes_pos_x[i], Assets.nodes_pos_y[i][j],
-                                       self.ring_img, Assets.node_label(i,j)))
+                                       self.ring_img, Assets.node_label(Assets.nodes_pos_x[i],j)))
                 self.nodes.add(Node(self.game, Assets.nodes_pos_x[i], Assets.nodes_pos_y[i][j],
-                                    self.node_img, Assets.node_label(i,j)))
+                                    self.node_img, Assets.node_label(Assets.nodes_pos_x[i],j)))
                 
-        self.b_stones.add(Stone(self.game, Assets.h_blue_x[0], Assets.h_blue_y[0], 12, self.hblue_img))
+        self.b_stones.add(Stone(self.game, Assets.h_blue_x[0], Assets.h_blue_y[0], 12, Assets.h_b_node[0], self.hblue_img))
     
     def form_groups(self):
         self.selection  = pygame.sprite.GroupSingle()
@@ -64,10 +64,10 @@ class Match():
             if event.type == pygame.QUIT:
                 self.game_on = False
         
-        self.g_stones.update(events, self.selection)
-        self.b_stones.update(events, self.selection)
+        self.g_stones.update(events, self.selection, self.nodes, self.next_nodes)
+        self.b_stones.update(events, self.selection, self.nodes, self.next_nodes)
         self.rings.update(events)
-        self.nodes.update(events, self.selection, self.next_nodes)
+        self.nodes.update(events)
         
     def display_board(self):
         # Set background

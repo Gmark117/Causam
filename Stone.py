@@ -2,7 +2,7 @@ import pygame
 import Assets
 
 class Stone(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, id, img):
+    def __init__(self, game, x, y, id, label, img):
         super().__init__()
         self.image  = img
         self.rect   = self.image.get_rect()
@@ -14,22 +14,22 @@ class Stone(pygame.sprite.Sprite):
         self.game = game
         self.id   = id
 
-        self.curr_node = Assets.node_label(x,y)
+        self.curr_node = label
 
         self.selected = False
 
         self.hist_x = []
         self.hist_y = []
     
-    def update(self, events, selection):
+    def update(self, events, selection, nodes, next_nodes):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and not self.rect.collidepoint(event.pos):
                 self.selected = False
             if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
                 self.selected = False if self.selected else True
+                if self.selected:
+                    Assets.update_selection(nodes, next_nodes, selection, self)
         
-        if self.selected:
-            Assets.update_selection(selection, self)
 
     def update_pos(self, x_new, y_new):
         self.true_x = x_new

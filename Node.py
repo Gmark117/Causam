@@ -1,6 +1,5 @@
 import pygame
 import Assets
-import Rules
 
 class Node(pygame.sprite.Sprite):
     def __init__(self, game, x, y, img, id):
@@ -16,13 +15,12 @@ class Node(pygame.sprite.Sprite):
         self.id    = id
 
         self.visible  = False
-        self.occupied = False
+        self.occupied = Assets.is_occupied(x, y)
 
-    def update(self, events, selection, next_nodes):
+    def update(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 self.visible = False
-                Rules.get_next_nodes(selection, next_nodes)
             if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos) and not self.occupied:
                 self.visible = False if self.visible else True
 
