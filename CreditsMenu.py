@@ -23,7 +23,7 @@ class CreditsMenu(Menu):
                 self.run_display = self.to_main_menu()
             
             # Set background
-            self.game.display.blit(self.background, (0,0))
+            self.game.display.blit(self.dark_bg, (0,0))
 
             # Display credits
             # TITLE

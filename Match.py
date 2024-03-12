@@ -23,27 +23,27 @@ class Match():
     def generate_sprites(self):
         img_dim = Assets.IMAGE_DIM
 
-        self.green_img = pygame.image.load(Assets.Images['GREEN_STONE'].value)
-        self.green_img = pygame.transform.scale(self.green_img, (img_dim,img_dim))
-        self.blue_img  = pygame.image.load(Assets.Images['BLUE_STONE'].value)
-        self.blue_img  = pygame.transform.scale(self.blue_img, (img_dim,img_dim))
-        self.hblue_img = pygame.image.load(Assets.Images['H_BLUE_STONE'].value)
-        self.hblue_img = pygame.transform.scale(self.hblue_img, (img_dim,img_dim))
+        self.white_img  = pygame.image.load(Assets.Images['WHITE_STONE'].value)
+        self.white_img  = pygame.transform.scale(self.white_img, (img_dim,img_dim))
+        self.black_img  = pygame.image.load(Assets.Images['BLACK_STONE'].value)
+        self.black_img  = pygame.transform.scale(self.black_img, (img_dim,img_dim))
+        self.hblack_img = pygame.image.load(Assets.Images['HBLACK_STONE'].value)
+        self.hblack_img = pygame.transform.scale(self.hblack_img, (img_dim,img_dim))
 
         self.ring_img = pygame.image.load(Assets.Images['SELECT_RING'].value)
         self.ring_img = pygame.transform.scale(self.ring_img, (img_dim,img_dim))
         self.node_img = pygame.image.load(Assets.Images['NEXT_NODE'].value)
         self.node_img = pygame.transform.scale(self.node_img, (img_dim,img_dim))
 
-        self.g_stones = pygame.sprite.RenderUpdates()
+        self.w_stones = pygame.sprite.RenderUpdates()
         self.b_stones = pygame.sprite.RenderUpdates()
 
         self.rings = pygame.sprite.RenderUpdates()
         self.nodes = pygame.sprite.RenderUpdates()
 
         for i in range(self.n_stones):
-            self.g_stones.add(Stone(self.game, Assets.greens_x[i], Assets.greens_y[i], i, Assets.w_nodes[i], self.green_img))
-            self.b_stones.add(Stone(self.game, Assets.blues_x[i], Assets.blues_y[i], i, Assets.b_nodes[i], self.blue_img))
+            self.w_stones.add(Stone(self.game, Assets.whites_x[i], Assets.whites_y[i], Assets.w_nodes[i], self.white_img))
+            self.b_stones.add(Stone(self.game, Assets.blacks_x[i], Assets.blacks_y[i], Assets.b_nodes[i], self.black_img))
 
             for j in range(len(Assets.nodes_pos_y[i])):
                 self.rings.add(SelRing(self.game, Assets.nodes_pos_x[i], Assets.nodes_pos_y[i][j],
@@ -51,7 +51,7 @@ class Match():
                 self.nodes.add(Node(self.game, Assets.nodes_pos_x[i], Assets.nodes_pos_y[i][j],
                                     self.node_img, Assets.node_label(Assets.nodes_pos_x[i],j)))
                 
-        self.b_stones.add(Stone(self.game, Assets.h_blue_x[0], Assets.h_blue_y[0], 12, Assets.h_b_node[0], self.hblue_img))
+        self.b_stones.add(Stone(self.game, Assets.hblack_x[0], Assets.hblack_y[0], Assets.hb_node[0], self.hblack_img))
     
     def form_groups(self):
         self.selection  = pygame.sprite.GroupSingle()
@@ -64,7 +64,7 @@ class Match():
             if event.type == pygame.QUIT:
                 self.game_on = False
         
-        self.g_stones.update(events, self.selection, self.nodes, self.next_nodes)
+        self.w_stones.update(events, self.selection, self.nodes, self.next_nodes)
         self.b_stones.update(events, self.selection, self.nodes, self.next_nodes)
         self.rings.update(events)
         self.nodes.update(events)
@@ -78,7 +78,7 @@ class Match():
         for sprite in self.nodes:
             sprite.draw(self.game.display)
 
-        self.g_stones.draw(self.game.display)
+        self.w_stones.draw(self.game.display)
         self.b_stones.draw(self.game.display)
 
         self.game.blit_screen()

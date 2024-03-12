@@ -7,7 +7,7 @@ class MatchMenu(Menu):
         super().__init__(game)
 
         # Get the list of states for this menu and set the current one
-        self.states = Assets.sim_menu_states    # ['Mode', 'AI Strength', 'Side',
+        self.states = Assets.match_menu_states  # ['Mode', 'AI Strength', 'Side',
                                                 #  'Back', 'Start Simulation']
         self.default_state = len(self.states) - 1
         self.state  = self.states[self.default_state]
@@ -67,7 +67,7 @@ class MatchMenu(Menu):
             time.sleep(0.05)
 
             # Set background 
-            self.game.display.blit(self.background,(0,0))
+            self.game.display.blit(self.dark_bg,(0,0))
 
             # Display sound and volume options
             # TITLE
@@ -116,19 +116,19 @@ class MatchMenu(Menu):
                            self.align_right,
                            self.states_y[0],
                            Assets.Fonts['SMALL'].value,
-                           Assets.Colors['BLACK'].value,
+                           Assets.Colors['GREEN'].value,
                            Assets.RectHandle['MIDLEFT'].value)
             self.draw_text(f'{self.ai_stren}', 25,
                            self.align_right,
                            self.states_y[1],
                            Assets.Fonts['SMALL'].value,
-                           Assets.Colors['BLACK'].value,
+                           Assets.Colors['GREEN'].value,
                            Assets.RectHandle['MIDLEFT'].value)
             self.draw_text(f'{self.side_options[self.side]}', 25,
                            self.align_right,
                            self.states_y[2],
                            Assets.Fonts['SMALL'].value,
-                           Assets.Colors['BLACK'].value,
+                           Assets.Colors['GREEN'].value,
                            Assets.RectHandle['MIDLEFT'].value)
             
             # CURSOR

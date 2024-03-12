@@ -19,6 +19,7 @@ class Menu():
         
         # Load backgrounds
         self.background = pygame.image.load(Assets.Images['BACKGROUND'].value)
+        self.dark_bg    = pygame.image.load(Assets.Images['DARK_BG'].value)
         self.board      = pygame.image.load(Assets.Images['BOARD'].value)
 
         # Load the ambient audio file

@@ -26,7 +26,7 @@ IMG_OFFSET = - int(IMAGE_DIM/2) + 2
 # Lists for menu voices and settings
 main_menu_states     = ['Start', 'Options', 'Credits', 'Exit']
 options_menu_states  = ['Game Volume', 'Music Volume', 'Button Sound', 'Back']
-sim_menu_states      = ['Mode', 'AI Strength', 'Side', 'Back', 'Start Simulation']
+match_menu_states      = ['Mode', 'AI Strength', 'Side', 'Back', 'Start Simulation']
 mode_options         = ["Player vs Player", "Player vs AI"]
 side_options         = ["White", "Black", "Random"]
 
@@ -84,16 +84,16 @@ for x in range(len(nodes_pos_x)):
 
 # Pieces positions
 w_nodes  = ['A1','B2','B3','B4','B5','C1','C3','C5','C7','C9','C11']
-greens_x = [  85, 235, 235, 235, 235, 385, 385, 385, 385, 385,  385]
-greens_y = [ 428, 315, 392, 468, 543,  54, 204, 354, 504, 654,  804]
+whites_x = [  85, 235, 235, 235, 235, 385, 385, 385, 385, 385,  385]
+whites_y = [ 428, 315, 392, 468, 543,  54, 204, 354, 504, 654,  804]
 
 b_nodes  = ['G3', 'G5', 'H3', 'H4', 'H5', 'H6', 'I3', 'I4', 'I5', 'I6', 'I7']
-blues_x  = [ 985,  985, 1135, 1135, 1135, 1135, 1285, 1285, 1285, 1285, 1285]
-blues_y  = [ 354,  504,  315,  390,  465,  540,  279,  354,  429,  504,  579]
+blacks_x = [ 985,  985, 1135, 1135, 1135, 1135, 1285, 1285, 1285, 1285, 1285]
+blacks_y = [ 354,  504,  315,  390,  465,  540,  279,  354,  429,  504,  579]
 
-h_b_node = ['G4']
-h_blue_x = [ 985]
-h_blue_y = [ 429]
+hb_node  = ['G4']
+hblack_x = [ 985]
+hblack_y = [ 429]
 
 
 #   ____  _         _     ____   ____   _____  ____  
@@ -133,10 +133,11 @@ class Audio(Enum):
 
 class Images(Enum):
         BACKGROUND   = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Background.png')
+        DARK_BG      = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Background_Dark.png')
         BOARD        = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Board.png')
-        GREEN_STONE  = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_G_Stone.png')
-        BLUE_STONE   = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_B_Stone.png')
-        H_BLUE_STONE = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_HB_Stone.png')
+        WHITE_STONE  = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_W_Stone.png')
+        BLACK_STONE  = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_B_Stone.png')
+        HBLACK_STONE = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_HB_Stone.png')
         SELECT_RING  = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Selection_Ring.png')
         NEXT_NODE    = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Next_Node.png')
         GAME_ICON    = os.path.join(GAME_DIR, 'Assets', 'Images', 'Causam_Board.png')
@@ -146,6 +147,19 @@ class RectHandle(Enum):
         MIDTOP       = 'Midtop'
         MIDRIGHT     = 'Midright'
         MIDLEFT      = 'Midleft'
+
+class Levels(Enum):
+        A            = 1
+        B            = 2
+        C            = 3
+        D            = 4
+        E            = 5
+        F            = 6
+        G            = 7
+        H            = 8
+        I            = 9
+        J            = 10
+        K            = 11
 
 
 #  _____  _   _  _   _   ____  _____  ___   ___   _   _  ____  
@@ -163,10 +177,13 @@ def is_occupied(x, y):
                 for j in range(len(nodes_pos_y)):
                         return True if (x==nodes_pos_x[i] and y==nodes_pos_y[j]) else False
 
+def get_lvl(label):
+        return Levels[label].value
+
 def update_selection(nodes, next_nodes, selection, sprite):
         if sprite.selected:
                 selection.add(sprite)
-        elif selection.sprite.id == sprite.id:
+        elif selection.sprite.curr_node == sprite.curr_node:
                 selection.remove(sprite)
         
         get_next_nodes(selection, nodes, next_nodes)
@@ -176,11 +193,13 @@ def get_next_nodes(selection, nodes, next_nodes):
         for i in range(len(all_nodes)):
                 if selection.sprite.curr_node == all_nodes[i]:
                         match all_nodes[i][0]:
-                                case 'A': next_from_first(nodes, next_nodes)
-                                case 'B': next_from_second(selection, nodes, next_nodes)
-                                #case 'C': next_from_third(selection, nodes, next_nodes)
-                                #case 'K': next_from_last(selection, nodes, next_nodes)
-                                #case   _: next_from_inside(selection, nodes, next_nodes)
+                                case 'A':         next_from_first(nodes, next_nodes)
+                                case 'B':         next_from_second(selection, nodes, next_nodes)
+                                case 'C':         next_from_third(selection, nodes, next_nodes)
+                                case 'D'|'E'|'F': next_from_first_half(selection, nodes, next_nodes)
+                                case 'G':         next_from_middle(selection, nodes, next_nodes)
+                                case 'H'|'I'|'J': next_from_second_half(selection, nodes, next_nodes)
+                                # Stones cannot move from the last level
 
 def turn_on(node, next_nodes):
         node.visible = True
@@ -192,21 +211,59 @@ def turn_off(node, next_nodes):
 
 def next_from_first(nodes, next_nodes):
         for node in nodes:
-                if node.id[0] == 'B':
+                if node.lvl == 2:
                         turn_off(node, next_nodes) if node.visible else turn_on(node, next_nodes)
 
 def next_from_second(selection, nodes, next_nodes):
-        curr_id = selection.sprite.curr_node
+        curr_lvl  = selection.sprite.lvl
+        curr_node = selection.sprite.node
         for node in nodes:
-                if (node.id[0] == 'A'
-                    or (node.id[0] == 'B' and (int(node.id[1:])==int(curr_id[1:])-1 or int(node.id[1:])==int(curr_id[1:])+1))
-                    or (node.id[0] == 'C' and int(node.id[1:])==(2 * int(curr_id[1:]) - 1))
-                    ):
+                if (    node.lvl == curr_lvl - 1
+                    or (node.lvl == curr_lvl     and (node.node == curr_node - 1 or node.node == curr_node + 1))
+                    or (node.lvl == curr_lvl + 1 and node.node == (2 * curr_node - 1))
+                ):
                         turn_off(node, next_nodes) if node.visible else turn_on(node, next_nodes)
 
-#def next_from_third(selection, nodes, next_nodes):
-#def next_from_last(selection, nodes, next_nodes):
-#def next_from_inside(selection, nodes, next_nodes):
+def next_from_third(selection, nodes, next_nodes):
+        curr_lvl  = selection.sprite.lvl
+        curr_node = selection.sprite.node
+        for node in nodes:
+                if (   (node.lvl == curr_lvl - 1 and (node.node == int((curr_node + 1)/2) if curr_node%2!=0 else False))
+                    or (node.lvl == curr_lvl     and (node.node == curr_node - 1 or node.node == curr_node + 1))
+                    or (node.lvl == curr_lvl + 1 and (node.node == curr_node - 1 or node.node == curr_node))
+                ):
+                        turn_off(node, next_nodes) if node.visible else turn_on(node, next_nodes)
+
+def next_from_first_half(selection, nodes, next_nodes):
+        curr_lvl  = selection.sprite.lvl
+        curr_node = selection.sprite.node
+        for node in nodes:
+                if (   (node.lvl == curr_lvl - 1 and (node.node == curr_node     or node.node == curr_node + 1))
+                    or (node.lvl == curr_lvl     and (node.node == curr_node - 1 or node.node == curr_node + 1))
+                    or (node.lvl == curr_lvl + 1 and (node.node == curr_node - 1 or node.node == curr_node))
+                ):
+                        turn_off(node, next_nodes) if node.visible else turn_on(node, next_nodes)
+
+def next_from_middle(selection, nodes, next_nodes):
+        curr_lvl  = selection.sprite.lvl
+        curr_node = selection.sprite.node
+        for node in nodes:
+                if (   (node.lvl == curr_lvl - 1 and (node.node == curr_node     or node.node == curr_node + 1))
+                    or (node.lvl == curr_lvl     and (node.node == curr_node - 1 or node.node == curr_node + 1))
+                    or (node.lvl == curr_lvl + 1 and (node.node == curr_node     or node.node == curr_node + 1))
+                ):
+                        turn_off(node, next_nodes) if node.visible else turn_on(node, next_nodes)
+
+def next_from_second_half(selection, nodes, next_nodes):
+        curr_lvl  = selection.sprite.lvl
+        curr_node = selection.sprite.node
+        for node in nodes:
+                if (   (node.lvl == curr_lvl - 1 and (node.node == curr_node - 1 or node.node == curr_node))
+                    or (node.lvl == curr_lvl     and (node.node == curr_node - 1 or node.node == curr_node + 1))
+                    or (node.lvl == curr_lvl + 1 and (node.node == curr_node     or node.node == curr_node + 1))
+                ):
+                        turn_off(node, next_nodes) if node.visible else turn_on(node, next_nodes)
+
 
 #  ____   _   _  _      _____  ____  
 # |  _ \ | | | || |    | ____|/ ___| 

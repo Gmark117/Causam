@@ -62,7 +62,7 @@ class OptionsMenu(Menu):
             time.sleep(0.1)
 
             # Set background
-            self.game.display.blit(self.background, (0, 0))
+            self.game.display.blit(self.dark_bg, (0, 0))
             
             # Display sound and volume options
             # TITLE
@@ -103,13 +103,13 @@ class OptionsMenu(Menu):
                            self.align_right,
                            self.states_y[1],
                            Assets.Fonts['SMALL'].value,
-                           Assets.Colors['BLACK'].value,
+                           Assets.Colors['GREEN'].value,
                            Assets.RectHandle['MIDLEFT'].value)
             self.draw_text('on' if self.button_sound=='on' else 'off', 25,
                            self.align_right,
                            self.states_y[2],
                            Assets.Fonts['SMALL'].value,
-                           Assets.Colors['BLACK'].value,
+                           Assets.Colors['GREEN'].value,
                            Assets.RectHandle['MIDLEFT'].value)
             # CURSOR
             self.draw_text('X', 30,

@@ -2,7 +2,7 @@ import pygame
 import Assets
 
 class Stone(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, id, label, img):
+    def __init__(self, game, x, y, label, img):
         super().__init__()
         self.image  = img
         self.rect   = self.image.get_rect()
@@ -12,7 +12,8 @@ class Stone(pygame.sprite.Sprite):
         self.rect.y = y + Assets.IMG_OFFSET
 
         self.game = game
-        self.id   = id
+        self.lvl  = Assets.get_lvl(label[0])
+        self.node = int(label[1:])
 
         self.curr_node = label
 

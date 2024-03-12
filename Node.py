@@ -2,7 +2,7 @@ import pygame
 import Assets
 
 class Node(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, img, id):
+    def __init__(self, game, x, y, img, label):
         super().__init__()
         self.image  = img
         self.rect   = self.image.get_rect()
@@ -12,7 +12,8 @@ class Node(pygame.sprite.Sprite):
         self.rect.y = y + Assets.IMG_OFFSET
 
         self.game  = game
-        self.id    = id
+        self.lvl  = Assets.get_lvl(label[0])
+        self.node = int(label[1:])
 
         self.visible  = False
         self.occupied = Assets.is_occupied(x, y)
