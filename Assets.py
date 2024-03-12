@@ -66,7 +66,7 @@ nodes_pos_y = [
            [ 90, 165, 240, 315, 390, 465, 540, 615, 690, 765],     # J
         [ 54, 129, 204, 279, 354, 429, 504, 579, 654, 729, 804]    # K
 ]
-
+'''
 nodes_up_border   = [ 'D1', 'E1', 'F1', 'G1', 'H1', 'I1',  'J1']
 nodes_down_border = ['D10', 'E9', 'F8', 'G7', 'H8', 'I9', 'J10']
 nodes_lvl_A  = ['A1']
@@ -77,6 +77,7 @@ nodes_internal = []
 for x in range(3,10):
        for y in range(1, len(nodes_pos_y[x])-1):
               nodes_internal.append(node_label(x,y))
+'''
 all_nodes = []
 for x in range(len(nodes_pos_x)):
        for y in range(len(nodes_pos_y[x])):
@@ -172,10 +173,22 @@ class Levels(Enum):
 def sqr(x):
         return x**2
 
+def find_node(where, match):
+        for n in where:
+                if n.label == match.label:
+                        return n
+
 def is_occupied(x, y):
-        for i in range(len(nodes_pos_x)):
-                for j in range(len(nodes_pos_y)):
-                        return True if (x==nodes_pos_x[i] and y==nodes_pos_y[j]) else False
+        for i in range(len(whites_x)):
+                if (x==whites_x[i] and y==whites_y[i]):
+                        return True
+        for i in range(len(blacks_x)):
+                if (x==blacks_x[i] and y==blacks_y[i]):
+                        return True
+        for i in range(len(hblack_x)):
+                if (x==hblack_x[i] and y==hblack_y[i]):
+                        return True
+        return False
 
 def get_lvl(label):
         return Levels[label].value
@@ -183,7 +196,7 @@ def get_lvl(label):
 def update_selection(nodes, next_nodes, selection, sprite):
         if sprite.selected:
                 selection.add(sprite)
-        elif selection.sprite.curr_node == sprite.curr_node:
+        elif selection.sprite.label == sprite.label:
                 selection.remove(sprite)
         
         get_next_nodes(selection, nodes, next_nodes)
@@ -191,7 +204,7 @@ def update_selection(nodes, next_nodes, selection, sprite):
 def get_next_nodes(selection, nodes, next_nodes):
         # Return next viable nodes
         for i in range(len(all_nodes)):
-                if selection.sprite.curr_node == all_nodes[i]:
+                if selection.sprite.label == all_nodes[i]:
                         match all_nodes[i][0]:
                                 case 'A':         next_from_first(nodes, next_nodes)
                                 case 'B':         next_from_second(selection, nodes, next_nodes)
@@ -202,12 +215,14 @@ def get_next_nodes(selection, nodes, next_nodes):
                                 # Stones cannot move from the last level
 
 def turn_on(node, next_nodes):
-        node.visible = True
-        next_nodes.add(node)
+        if not node.occupied:
+                node.visible = True
+                next_nodes.add(node)
         
 def turn_off(node, next_nodes):
-        node.visible = False
-        next_nodes.remove(node)
+        if node.visible:
+                node.visible = False
+                next_nodes.remove(node)
 
 def next_from_first(nodes, next_nodes):
         for node in nodes:

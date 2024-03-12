@@ -8,6 +8,7 @@ from Node import Node
 class Match():
     def __init__(self, game):
         self.game = game
+        #self.animating = False
 
         self.n_stones = 11
         self.generate_sprites()
@@ -58,6 +59,7 @@ class Match():
         self.next_nodes = pygame.sprite.RenderUpdates()
 
     def check_inputs(self):
+        #if not self.animating:
         events = pygame.event.get()
 
         for event in events:
@@ -67,7 +69,11 @@ class Match():
         self.w_stones.update(events, self.selection, self.nodes, self.next_nodes)
         self.b_stones.update(events, self.selection, self.nodes, self.next_nodes)
         self.rings.update(events)
-        self.nodes.update(events)
+        self.nodes.update(events, self.next_nodes)
+
+        for node in self.next_nodes:
+            if node.move:
+                self.move(node)
         
     def display_board(self):
         # Set background
@@ -82,9 +88,25 @@ class Match():
         self.b_stones.draw(self.game.display)
 
         self.game.blit_screen()
-    
-    def move(self, id, dest_node):
-        # Find the right stone to move
-        # Get the coords of the destination node
-        # Call the move method of the stone
-        pass
+        
+    def move(self, node):
+        if node.visible and self.selection:
+            self.free_node()
+
+            self.selection.sprite.move(node.true_x, node.true_y)
+
+            node.move = False
+            self.occupy_node(node)
+        
+        self.next_nodes.clear(self.game.display, self.game.curr_menu.board)
+
+        self.selection.empty()
+        self.next_nodes.empty()
+
+    def free_node(self):
+        Assets.find_node(self.nodes, self.selection.sprite).free_node()
+        Assets.find_node(self.rings, self.selection.sprite).free_node()
+        
+    def occupy_node(self, node):
+        node.occupy_node()
+        Assets.find_node(self.rings, node).occupy_node()

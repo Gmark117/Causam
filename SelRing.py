@@ -12,6 +12,7 @@ class SelRing(pygame.sprite.Sprite):
         self.rect.y = y + Assets.IMG_OFFSET
 
         self.game  = game
+        self.label = label
         self.lvl  = Assets.get_lvl(label[0])
         self.node = int(label[1:])
 
@@ -22,9 +23,15 @@ class SelRing(pygame.sprite.Sprite):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and not self.rect.collidepoint(event.pos):
                 self.visible = False
-            if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
+            if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos) and self.occupied:
                 self.visible = False if self.visible else True
 
     def draw(self, surface):
         if self.visible:
             surface.blit(self.image, self.rect)
+
+    def occupy_node(self):
+        self.occupied = True
+    
+    def free_node(self):
+        self.occupied = False

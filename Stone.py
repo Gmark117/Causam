@@ -15,12 +15,14 @@ class Stone(pygame.sprite.Sprite):
         self.lvl  = Assets.get_lvl(label[0])
         self.node = int(label[1:])
 
-        self.curr_node = label
+        self.label = label
 
         self.selected = False
 
         self.hist_x = []
         self.hist_y = []
+        #self.t = 0
+        #self.steps = 1000
     
     def update(self, events, selection, nodes, next_nodes):
         for event in events:
@@ -30,7 +32,6 @@ class Stone(pygame.sprite.Sprite):
                 self.selected = False if self.selected else True
                 if self.selected:
                     Assets.update_selection(nodes, next_nodes, selection, self)
-        
 
     def update_pos(self, x_new, y_new):
         self.true_x = x_new
@@ -38,7 +39,7 @@ class Stone(pygame.sprite.Sprite):
         self.rect.x = x_new + Assets.IMG_OFFSET
         self.rect.y = y_new + Assets.IMG_OFFSET
 
-        self.curr_node = Assets.node_label(self.true_x, self.true_y)
+        self.label = Assets.node_label(self.true_x, self.true_y)
 
     def move(self, dest_x, dest_y):
         self.hist_x.append(self.true_x)
@@ -47,16 +48,21 @@ class Stone(pygame.sprite.Sprite):
         #self.log_move()
 
         self.update_pos(dest_x, dest_y)
-        self.animate_move()
+        # return self.animate_move()
     
     def animate_move(self):
         # NOT WORKING! USE Group.clear()
         delta_x = self.hist_x[-1] - self.true_x
         delta_y = self.hist_y[-1] - self.true_y
-        
-        for t in range(1,101):
-            self.game.display.blit(self.image, (int(self.rect.x + delta_x*t/100),
-                                                int(self.rect.y + delta_y*t/100)))
-            self.game.blit_screen()
 
+        if self.t<self.steps:
+            self.t += 1
+
+        self.game.display.blit(self.image, (int(self.hist_x[-1] + Assets.IMG_OFFSET - delta_x*self.t/self.steps),
+                                            int(self.hist_y[-1] + Assets.IMG_OFFSET - delta_y*self.t/self.steps)))
         
+        if self.t==self.steps:
+            self.t = 0
+            return False
+        
+        return True

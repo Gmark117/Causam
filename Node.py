@@ -12,19 +12,27 @@ class Node(pygame.sprite.Sprite):
         self.rect.y = y + Assets.IMG_OFFSET
 
         self.game  = game
+        self.label = label
         self.lvl  = Assets.get_lvl(label[0])
         self.node = int(label[1:])
 
+        self.move = False
         self.visible  = False
         self.occupied = Assets.is_occupied(x, y)
 
-    def update(self, events):
+    def update(self, events, next_nodes):
         for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and not self.rect.collidepoint(event.pos):
                 self.visible = False
-            if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos) and not self.occupied:
-                self.visible = False if self.visible else True
+            if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos) and not self.occupied and self.visible:
+                self.move = True
 
     def draw(self, surface):
         if self.visible:
             surface.blit(self.image, self.rect)
+    
+    def occupy_node(self):
+        self.occupied = True
+    
+    def free_node(self):
+        self.occupied = False
